@@ -1100,7 +1100,9 @@ public class FileUtils {
     }
 
     public static @Nullable String extractRelativePath(@Nullable String data) {
+        data = getCanonicalPath(data);
         if (data == null) return null;
+
         final Matcher matcher = PATTERN_RELATIVE_PATH.matcher(data);
         if (matcher.find()) {
             final int lastSlash = data.lastIndexOf('/');
@@ -1645,5 +1647,17 @@ public class FileUtils {
         }
 
         return null;
+    }
+
+    @Nullable
+    private static String getCanonicalPath(@Nullable String path) {
+        if (path == null) return null;
+
+        try {
+            return new File(path).getCanonicalPath();
+        } catch (IOException e) {
+            Log.d(TAG, "Unable to get canonical path from invalid data path: " + path, e);
+            return null;
+        }
     }
 }
